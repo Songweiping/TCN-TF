@@ -34,14 +34,14 @@ class TCN(object):
         reshaped_outputs = tf.reshape(outputs, (-1, self.emb_size))
         logits = tf.matmul(reshaped_outputs, embedding, transpose_b=True)
 
-        logits_shape = tf.concat(tf.shape(outputs)[:2], (tf.constant(self.output_size),)], 0)
+        logits_shape = tf.concat([tf.shape(outputs)[:2], (tf.constant(self.output_size),)], 0)
         logits = tf.reshape(logits, shape=logits_shape)
         eff_logits = tf.slice(logits, [0,self.eff_history,0], [-1, -1, -1])
         eff_labels = tf.slice(self.y, [0,self.eff_history], [-1, -1])
         CE_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=eff_labels, logits=eff_logits)
         self.loss = tf.reduce_mean(CE_loss)
 
-        optimizer = tf.train.AdamOptimizer(self.lr)
+        optimizer = tf.train.GradientDescentOptimizer(self.lr)
         gvs = optimizer.compute_gradients(self.loss)
         capped_gvs = [(tf.clip_by_value(grad, -self.clip_value, self.clip_value), var) for grad, var in gvs]
         self.train_op = optimizer.apply_gradients(capped_gvs)

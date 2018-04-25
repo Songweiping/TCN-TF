@@ -82,10 +82,3 @@ def get_batch(source, start_index, args):
     target = source[:, start_index+1:end_index+1] # The successors of the inp.
     return inp, target
 
-
-def save(saver, model):
-    save_filename = 'model.pt'
-    torch.save(model, save_filename)
-    print('Saved as %s' % save_filename)
-
-

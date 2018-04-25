@@ -31,8 +31,8 @@ parser.add_argument('--levels', type=int, default=3,
                     help='# of levels (default: 3)')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='report interval (default: 100')
-parser.add_argument('--lr', type=float, default=0.04,
-                    help='initial learning rate (default: 4)')
+parser.add_argument('--lr', type=float, default=1.0,
+                    help='initial learning rate (default: 1)')
 parser.add_argument('--emsize', type=int, default=100,
                     help='dimension of character embeddings (default: 100)')
 parser.add_argument('--optim', type=str, default='SGD',
@@ -102,7 +102,6 @@ def train(epoch, sess):
         eff_history = args.seq_len - args.validseqlen
 
         global lr
-        global total_step
         total_step += 1
         feed_dict = {model.x: inp, model.y: target, model.lr: lr, model.eff_history: eff_history}
         _, loss = sess.run([model.train_op, model.loss], feed_dict=feed_dict)
@@ -145,20 +144,18 @@ def main(sess):
             print('=' * 89)
 
             if epoch > 5 and vloss > max(all_losses[-3:]):
-                lr = lr / 10.
+                lr = lr / 2.
             all_losses.append(vloss)
 
             if vloss < best_vloss:
                 print("Saving...")
-                global total_step
-                model.saver.save(sess, 'save/model.ckpt', global_step=total_step)
+                model.saver.save(sess, 'save/model.ckpt')
                 best_vloss = vloss
 
     except KeyboardInterrupt:
         print('-' * 89)
         print("Saving before quit...")
-        global total_step
-        model.saver.save(sess, 'save/model.ckpt', global_step=global_step)
+        model.saver.save(sess, 'save/model.ckpt')
 
     # Run on test data.
     test_loss = evaluate(test_data)
