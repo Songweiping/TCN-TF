@@ -75,7 +75,7 @@ def evaluate(source):
     count = 0
     source_len = source.shape[1]
     for batch, i in enumerate(range(0, source_len - 1, args.validseqlen)):
-        if i + args.seq_len >= source_len:
+        if i + args.seq_len - args.validseqlen >= source_len:
             break
         inp, target = get_batch(source, i, args)
         eff_history = args.seq_len - args.validseqlen
@@ -96,7 +96,7 @@ def train(epoch, sess):
     source = train_data
     source_len = source.shape[1]
     for batch_idx, i in enumerate(range(0, source_len - 1, args.validseqlen)):
-        if i + args.seq_len >= source_len:
+        if i + args.seq_len - args.validseqlen >= source_len:
             break
         inp, target = get_batch(source, i, args)
         eff_history = args.seq_len - args.validseqlen

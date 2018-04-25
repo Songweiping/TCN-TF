@@ -7,9 +7,7 @@ Time: April 24, 2018
 import tensorflow as tf
 
 def chomp1d(X, chomp_size):
-    X_shape = X.get_shape().as_list()
-    return tf.slice(X, [0,0,0], [-1,X_shape[1]-chomp_size,-1])
-
+    return X[:, :-chomp_size, :]
 
 class TemporalConvNet(object):
     def __init__(self, num_channels, stride=1, kernel_size=2, dropout=0.2):

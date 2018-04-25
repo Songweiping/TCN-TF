@@ -76,7 +76,7 @@ def batchify(data, batch_size, args):
 
 
 def get_batch(source, start_index, args):
-    seq_len = min(args.seq_len, source.size - 1 - start_index)
+    seq_len = min(args.seq_len, source.shape[1] - 1 - start_index)
     end_index = start_index + seq_len
     inp = source[:, start_index:end_index]
     target = source[:, start_index+1:end_index+1] # The successors of the inp.
