@@ -1,7 +1,7 @@
 import tensorflow as tf
 import sys
-sys.path.append("../../")
-from tf_tcn.tcn import TemporalConvNet
+sys.path.append("../")
+from tcn import TemporalConvNet
 
 
 class TCN(object):

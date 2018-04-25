@@ -2,8 +2,8 @@ import argparse
 import tensorflow as tf
 import sys
 sys.path.append("../../")
-from tf_tcn.char_cnn.utils import *
-from tf_tcn.char_cnn.model import TCN
+from utils import *
+from model import TCN
 import time
 import math
 
