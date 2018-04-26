@@ -3,11 +3,7 @@
 Author: Weiping Song
 Time: April 24, 2018
 '''
-
 import tensorflow as tf
-
-def chomp1d(X, chomp_size):
-    return X[:, :-chomp_size, :]
 
 class TemporalConvNet(object):
     def __init__(self, num_channels, stride=1, kernel_size=2, dropout=0.2):
@@ -32,7 +28,7 @@ class TemporalConvNet(object):
         return outputs[-1]
 
     def _TemporalBlock(self, value, n_inputs, n_outputs, kernel_size, stride, dilation, padding, dropout=0.2, level=0):
-        padded_value1 = tf.pad(value, [[0,0], [padding,padding], [0,0]])
+        padded_value1 = tf.pad(value, [[0,0], [padding,0], [0,0]])
         self.conv1 = tf.layers.conv1d(inputs=padded_value1,
                                     filters=n_outputs,
                                     kernel_size=kernel_size,
@@ -43,10 +39,9 @@ class TemporalConvNet(object):
                                     kernel_initializer=tf.random_normal_initializer(0, 0.01),
                                     bias_initializer=tf.zeros_initializer(),
                                     name='layer'+str(level)+'_conv1')
-        self.chomp1 = chomp1d(self.conv1, padding)
-        self.output1 = tf.nn.dropout(tf.nn.relu(self.chomp1), keep_prob=1-dropout)
+        self.output1 = tf.nn.dropout(tf.nn.relu(self.conv1), keep_prob=1-dropout)
 
-        padded_value2 = tf.pad(self.output1, [[0,0], [padding,padding], [0,0]])
+        padded_value2 = tf.pad(self.output1, [[0,0], [padding,0], [0,0]])
         self.conv2 = tf.layers.conv1d(inputs=padded_value2,
                                     filters=n_outputs,
                                     kernel_size=kernel_size,
@@ -57,8 +52,7 @@ class TemporalConvNet(object):
                                     kernel_initializer=tf.random_normal_initializer(0, 0.01),
                                     bias_initializer=tf.zeros_initializer(),
                                     name='layer'+str(level)+'_conv2')
-        self.chomp2 = chomp1d(self.conv2, padding)
-        self.output2 = tf.nn.dropout(tf.nn.relu(self.chomp2), keep_prob=1-dropout)
+        self.output2 = tf.nn.dropout(tf.nn.relu(self.conv2), keep_prob=1-dropout)
 
         if n_inputs != n_outputs:
             res_x = tf.layers.conv1d(inputs=value,
