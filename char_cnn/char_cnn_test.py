@@ -31,8 +31,8 @@ parser.add_argument('--levels', type=int, default=3,
                     help='# of levels (default: 3)')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='report interval (default: 100')
-parser.add_argument('--lr', type=float, default=1.0,
-                    help='initial learning rate (default: 1)')
+parser.add_argument('--lr', type=float, default=4.0,
+                    help='initial learning rate (default: 4)')
 parser.add_argument('--emsize', type=int, default=100,
                     help='dimension of character embeddings (default: 100)')
 parser.add_argument('--optim', type=str, default='SGD',
@@ -101,7 +101,7 @@ def train(epoch, sess):
         inp, target = get_batch(source, i, args)
         eff_history = args.seq_len - args.validseqlen
 
-        global lr
+        global lr, total_step
         total_step += 1
         feed_dict = {model.x: inp, model.y: target, model.lr: lr, model.eff_history: eff_history}
         _, loss = sess.run([model.train_op, model.loss], feed_dict=feed_dict)
@@ -117,6 +117,7 @@ def train(epoch, sess):
                               elapsed * 1000 / args.log_interval, cur_loss, cur_loss / math.log(2)))
             total_loss = 0
             start_time = time.time()
+            sys.stdout.flush()
 
     return sum(losses) * 1.0 / len(losses)
 
@@ -144,7 +145,7 @@ def main(sess):
             print('=' * 89)
 
             if epoch > 5 and vloss > max(all_losses[-3:]):
-                lr = lr / 2.
+                lr = lr / 10.
             all_losses.append(vloss)
 
             if vloss < best_vloss:
