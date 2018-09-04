@@ -22,6 +22,8 @@ from tensorflow.python.ops import init_ops
 from tensorflow.python.ops import nn_ops
 from tensorflow.python.ops import nn_impl
 
+import tensorflow as tf
+
 class _WNConv(convolutional_layers._Conv):
     def __init__(self, *args, **kwargs):
         self.weight_norm = kwargs.pop('weight_norm')
@@ -55,7 +57,7 @@ class _WNConv(convolutional_layers._Conv):
                                        initializer=init_ops.ones_initializer(),
                                        dtype=kernel.dtype,
                                        trainable=True)
-            self.kernel = tf.reshape(g,[1,1,num_filters]) * nn_impl.l2_normalize(kernel, [0, 1, 2]) 
+            self.kernel = tf.reshape(g,[1,1,self.filters]) * nn_impl.l2_normalize(kernel, [0, 1, 2]) 
         else:
             self.kernel = kernel
         
@@ -151,6 +153,7 @@ def wnconv1d(inputs,
         data_format=data_format,
         dilation_rate=dilation_rate,
         activation=activation,
+        weight_norm=weight_norm,
         use_bias=use_bias,
         kernel_initializer=kernel_initializer,
         bias_initializer=bias_initializer,

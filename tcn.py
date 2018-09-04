@@ -51,7 +51,7 @@ class TemporalConvNet(object):
                                     padding='valid',
                                     dilation_rate=dilation,
                                     activation=None,
-                                    weight_norm=False, #default is False.
+                                    weight_norm=True, #default is False.
                                     kernel_initializer=tf.random_normal_initializer(0, 0.01),
                                     bias_initializer=tf.zeros_initializer(),
                                     name='layer'+str(level)+'_conv2')
