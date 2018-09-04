@@ -57,7 +57,7 @@ class _WNConv(convolutional_layers._Conv):
                                        initializer=init_ops.ones_initializer(),
                                        dtype=kernel.dtype,
                                        trainable=True)
-            self.kernel = tf.reshape(g,[1,1,self.filters]) * nn_impl.l2_normalize(kernel, [0, 1, 2]) 
+            self.kernel = tf.reshape(g,[1,1,self.filters]) * nn_impl.l2_normalize(kernel, [0, 1]) 
         else:
             self.kernel = kernel
         
