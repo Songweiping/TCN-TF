@@ -13,7 +13,7 @@ If you find this repository helpful, please cite the paper:
 ```
 
 ## Requirements
-* Tensorflow >= 1.4
+* Tensorflow 1.4.1
 * Observations
 * Numpy
 
