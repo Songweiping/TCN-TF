@@ -66,7 +66,7 @@ num_chans = [args.nhid] * (args.levels - 1) + [args.emsize]
 k_size = args.ksize
 dropout = args.dropout
 emb_dropout = args.emb_dropout
-model = TCN(args.emsize, n_characters, num_chans, args.seq_len, args.emsize, kernel_size=k_size, dropout=dropout, emb_dropout=emb_dropout)
+model = TCN(args.emsize, n_characters, num_chans, args.seq_len, args.emsize, kernel_size=k_size)
 lr = args.lr
 total_step = 0
 
@@ -103,7 +103,7 @@ def train(epoch, sess):
 
         global lr, total_step
         total_step += 1
-        feed_dict = {model.x: inp, model.y: target, model.lr: lr, model.eff_history: eff_history}
+        feed_dict = {model.x: inp, model.y: target, model.lr: lr, model.eff_history: eff_history, model.dropout: args.dropout}
         _, loss = sess.run([model.train_op, model.loss], feed_dict=feed_dict)
         total_loss += loss
 

@@ -5,17 +5,14 @@ from tcn import TemporalConvNet
 
 
 class TCN(object):
-    def __init__(self, input_size, output_size, num_channels, seq_len, emb_size, kernel_size=2, dropout=0.2, emb_dropout=0.2, clip_value=1.0):
+    def __init__(self, input_size, output_size, num_channels, seq_len, emb_size, kernel_size=2, clip_value=1.0):
         self.input_size = input_size
         self.output_size = output_size
         self.num_channels = num_channels
         self.seq_len = seq_len
         self.kernel_size = kernel_size
-        self.dropout = dropout
-        self.emb_dropout = emb_dropout
         self.emb_size = emb_size
         self.clip_value = clip_value
-        self.tcn = TemporalConvNet(num_channels, stride=1, kernel_size=kernel_size, dropout=dropout)
 
         self._build()
         self.saver = tf.train.Saver()
@@ -25,11 +22,14 @@ class TCN(object):
         self.y = tf.placeholder(tf.int32, shape=(None, None), name='next_chars')
         self.lr = tf.placeholder(tf.float32, shape=None, name='lr')
         self.eff_history = tf.placeholder(tf.int32, shape=None, name='eff_history')
+        self.dropout = tf.placeholder_with_default(0., shape=())
+        self.emb_dropout = tf.placeholder_with_default(0., shape=())
 
         embedding = tf.get_variable('char_embedding', shape=(self.output_size, self.emb_size), dtype=tf.float32,
                                 initializer=tf.random_uniform_initializer(-0.1, 0.1))
         inputs = tf.nn.embedding_lookup(embedding, self.x)
 
+        self.tcn = TemporalConvNet(self.num_channels, stride=1, kernel_size=self.kernel_size, dropout=self.dropout)
         outputs = self.tcn(inputs)
         reshaped_outputs = tf.reshape(outputs, (-1, self.emb_size))
         logits = tf.matmul(reshaped_outputs, embedding, transpose_b=True)
